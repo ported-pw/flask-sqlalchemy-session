@@ -11,6 +11,11 @@ from werkzeug.local import LocalProxy
 from flask import _app_ctx_stack, current_app
 from sqlalchemy.orm import scoped_session
 
+try:
+    from greenlet import getcurrent as _get_ident  # type: ignore
+except ImportError:
+    from threading import get_ident as _get_ident
+
 __all__ = ["current_session", "flask_scoped_session"]
 __version__ = 1.1
 
@@ -50,7 +55,7 @@ class flask_scoped_session(scoped_session):
         """
         super(flask_scoped_session, self).__init__(
             session_factory,
-            scopefunc=_app_ctx_stack._get__ident_func__())
+            scopefunc=_get_ident)
         # the _app_ctx_stack.__ident_func__ is the greenlet.get_current, or
         # thread.get_ident if no greenlets are used.
         # each Flask request is launched in a seperate greenlet/thread, so our
