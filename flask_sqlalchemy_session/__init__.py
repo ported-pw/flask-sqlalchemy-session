@@ -50,7 +50,7 @@ class flask_scoped_session(scoped_session):
         """
         super(flask_scoped_session, self).__init__(
             session_factory,
-            scopefunc=_app_ctx_stack.__ident_func__)
+            scopefunc=_app_ctx_stack._get__ident_func__())
         # the _app_ctx_stack.__ident_func__ is the greenlet.get_current, or
         # thread.get_ident if no greenlets are used.
         # each Flask request is launched in a seperate greenlet/thread, so our
